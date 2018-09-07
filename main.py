@@ -20,25 +20,24 @@ def wit():
     if res['entities']['intent']:
         r = intent_switch(res, res['entities']['intent'][0]['value'])
 
-    r = make_response(jsonify(r))
-    r.headers['Content-Type'] = "application/json"
+    if r:
+        r = make_response(jsonify(r))
+        r.headers['Content-Type'] = "application/json"
+        r = (r, 200)
+    else:
+        r = make_response(jsonify({ "text": "Oops. Something went wrong!" }))
+        r.headers['Content-Type'] = "application/json"
+        r = (r, 404)
 
     return r
 
 def get_string_date():
-    now = datetime.datetime.now()
+    now = datetime.date.today()
     y = "{}".format(now.year)
 
-    if (now.month < 10):
-        m = "0{}".format(now.month)
-    else:
-        m = "{}".format(now.month)
-
-    if (now.date < 10):
-        d = "0{}".format(now.date)
-    else:
-        d = "{}".format(now.date)
-
+    m = "%02{}".format(now.month)
+    d = "%02{}".format(now.day)
+    
     return (y + m + d)
 
 def intent_switch(req, act):
