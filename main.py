@@ -25,7 +25,7 @@ def wit():
         r.headers['Content-Type'] = "application/json"
         r = (r, 200)
     else:
-        r = make_response(jsonify({ "text": "Oops. Something went wrong!" }))
+        r = make_response(jsonify({"text": "Oops. Something went wrong!"}))
         r.headers['Content-Type'] = "application/json"
         r = (r, 404)
 
@@ -70,16 +70,39 @@ def music_addTo_queue(req):
     pass
 
 def music_play_album(req):
-    pass
+    title_album = req['entities']['title_album'][0]['value']
+    name_artist = req['entities']['name_artist'][0]['value']
+
+    params = {'query': title_album, 'type': 'Album'}
+    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
+    r = requests.get(BASE_URL + "search", params=params, headers=headers)
+
+    id = r[0]['topResult']['dataList'][0]['id']
+    return "svara://svara.id/Album/{}".format(id)
 
 def music_play_artist(req):
-    pass
+    name_artist = req['entities']['name_artist'][0]['value']
+
+    params = {'query': name_artist, 'type': 'Artist'}
+    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
+    r = requests.get(BASE_URL + "search", params=params, headers=headers)
+
+    id = r[0]['topResult']['dataList'][0]['id']
+    return "svara://svara.id/Artist/{}".format(id)
 
 def music_play_popular(req):
     pass
 
 def music_play_title(req):
-    pass
+    title_song = req['entities']['title_song'][0]['value']
+    name_artist = req['entities']['name_artist'][0]['value']
+
+    params = {'query': title_song, 'type': 'Music'}
+    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
+    r = requests.get(BASE_URL + "search", params=params, headers=headers)
+
+    id = r[0]['topResult']['dataList'][0]['id']
+    return "svara://svara.id/Music/{}".format(id)
 
 def play_recommendation(req):
     pass
@@ -88,7 +111,14 @@ def playlist_play(req):
     pass
 
 def radio_play(req):
-    pass
+    name_radio = req['entities']['name_radio'][0]['value']
+
+    params = {'query': name_radio, 'type': 'Radio'}
+    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
+    r = requests.get(BASE_URL + "search", params=params, headers=headers)
+
+    id = r[0]['topResult']['dataList'][0]['id']
+    return "svara://svara.id/Radio/{}".format(id)
 
 def radioContent_play_radio(req):
     pass
@@ -97,10 +127,19 @@ def radioContent_play_tag(req):
     pass
 
 def radioContent_play_title(req):
-    pass
+    title_content = req['entities']['title_content'][0]['value']
+
+    params = {'query': title_content, 'type': 'RadioContent'}
+    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
+    r = requests.get(BASE_URL + "search", params=params, headers=headers)
+
+    id = r[0]['topResult']['dataList'][0]['id']
+    return "svara://svara.id/RadioContent/{}".format(id)
 
 def search(req):
-    params = {'query': req['entities']['query'][0]['value']}
+    query = req['entities']['query'][0]['value']
+
+    params = {'query': query}
     headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
     r = requests.get(BASE_URL + "search", params=params, headers=headers)
 
