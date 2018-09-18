@@ -82,7 +82,7 @@ def music_play_album(req):
     r = requests.get(BASE_URL + "search", params=params, headers=headers)
 
     id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://svara.id/Album/{}".format(id)
+    return "svara://play.svara.id/Album/{}".format(id)
 
 def music_play_artist(req):
     name_artist = req['entities']['name_artist'][0]['value']
@@ -93,7 +93,7 @@ def music_play_artist(req):
 
     r = r.json()
     id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://svara.id/Artist/{}".format(id)
+    return "svara://play.svara.id/Artist/{}".format(id)
 
 def music_play_popular(req):
     pass
@@ -108,7 +108,7 @@ def music_play_title(req):
 
     r = r.json()
     id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://svara.id/Music/{}".format(id)
+    return "svara://play.svara.id/Music/{}".format(id)
 
 def play_recommendation(req):
     pass
@@ -124,7 +124,7 @@ def radio_play(req):
     r = requests.get(BASE_URL + "search", params=params, headers=headers)
 
     id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://svara.id/Radio/{}".format(id)
+    return "svara://play.svara.id/Radio/{}".format(id)
 
 def radioContent_play_radio(req):
     pass
@@ -140,7 +140,7 @@ def radioContent_play_title(req):
     r = requests.get(BASE_URL + "search", params=params, headers=headers)
 
     id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://svara.id/RadioContent/{}".format(id)
+    return "svara://play.svara.id/RadioContent/{}".format(id)
 
 def search(req):
     if req.get('entities').get('query'):
