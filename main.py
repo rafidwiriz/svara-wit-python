@@ -1,4 +1,4 @@
-from flask import Flask, request, make_response, jsonify
+from flask import Flask, request, make_response, jsonify, redirect
 import requests
 import datetime
 
@@ -21,9 +21,13 @@ def wit():
         r = intent_switch(res, res['entities']['intent'][0]['value'])
 
     if r:
-        r = make_response(jsonify(r))
-        r.headers['Content-Type'] = "application/json"
-        r = (r, 200)
+        if (type(r) == list):
+            print(type(r))
+            r = make_response(jsonify(r))
+            r.headers['Content-Type'] = "application/json"
+            r = (r, 200)
+        else:
+            r = redirect(r, code=302)
     else:
         r = make_response(jsonify({"text": "Oops. Something went wrong!"}))
         r.headers['Content-Type'] = "application/json"
@@ -33,8 +37,8 @@ def wit():
 
 def get_string_date():
     now = datetime.date.today()
-    y = "{}".format(now.year)
 
+    y = "{}".format(now.year)
     m = "%02{}".format(now.month)
     d = "%02{}".format(now.day)
     
@@ -71,7 +75,7 @@ def music_addTo_queue(req):
 
 def music_play_album(req):
     title_album = req['entities']['title_album'][0]['value']
-    name_artist = req['entities']['name_artist'][0]['value']
+    name_artist = req['entities']['name_artist'][0]['value'] if req.get('entities').get('name_artist') else None
 
     params = {'query': title_album, 'type': 'Album'}
     headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
@@ -87,6 +91,7 @@ def music_play_artist(req):
     headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
     r = requests.get(BASE_URL + "search", params=params, headers=headers)
 
+    r = r.json()
     id = r[0]['topResult']['dataList'][0]['id']
     return "svara://svara.id/Artist/{}".format(id)
 
@@ -95,12 +100,13 @@ def music_play_popular(req):
 
 def music_play_title(req):
     title_song = req['entities']['title_song'][0]['value']
-    name_artist = req['entities']['name_artist'][0]['value']
+    name_artist = req['entities']['name_artist'][0]['value'] if req.get('entities').get('name_artist') else None
 
     params = {'query': title_song, 'type': 'Music'}
     headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
     r = requests.get(BASE_URL + "search", params=params, headers=headers)
 
+    r = r.json()
     id = r[0]['topResult']['dataList'][0]['id']
     return "svara://svara.id/Music/{}".format(id)
 
@@ -137,7 +143,10 @@ def radioContent_play_title(req):
     return "svara://svara.id/RadioContent/{}".format(id)
 
 def search(req):
-    query = req['entities']['query'][0]['value']
+    if req.get('entities').get('query'):
+        query = req['entities']['query'][0]['value']
+    else:
+        query = list(req['entities'].values())[0][0]['value']
 
     params = {'query': query}
     headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
