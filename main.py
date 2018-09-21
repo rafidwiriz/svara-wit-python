@@ -2,7 +2,7 @@ from flask import Flask, request, make_response, jsonify, redirect
 import requests
 import datetime
 
-from config import BASE_URL, BASE_URL_AUTH, ACCESS_TOKEN, ACCESS_TOKEN_GENDIGBADIG, APP_ACCESS_TOKEN
+from config import *
 
 app = Flask(__name__)
 WIT_TOKEN = 'RUU3F6BNDSDLL7RO6ZLL6V6IKN3Z5T4W'
