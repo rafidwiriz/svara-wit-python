@@ -44,6 +44,15 @@ def get_string_date():
     
     return (y + m + d)
 
+def read_value(entity):
+    return entity[0]['value']
+
+def search_svara(params):
+    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
+    r = requests.get(BASE_URL + "search", params=params, headers=headers)
+
+    return r.json()
+
 def intent_switch(req, act):
     FUNC_DICT = {
         'add_to_library': addTo_library,
@@ -74,24 +83,21 @@ def music_addTo_queue(req):
     pass
 
 def music_play_album(req):
-    title_album = req['entities']['title_album'][0]['value']
-    name_artist = req['entities']['name_artist'][0]['value'] if req.get('entities').get('name_artist') else None
+    title_album = read_value(req['entities']['title_album'])
+    name_artist = read_value(req['entities']['name_artist']) if req.get('entities').get('name_artist') else None
 
     params = {'query': title_album, 'type': 'Album'}
-    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
-    r = requests.get(BASE_URL + "search", params=params, headers=headers)
+    r = search_svara(params)
 
     id = r[0]['topResult']['dataList'][0]['id']
     return "svara://play.svara.id/Album/{}".format(id)
 
 def music_play_artist(req):
-    name_artist = req['entities']['name_artist'][0]['value']
+    name_artist = read_value(req['entities']['name_artist'])
 
     params = {'query': name_artist, 'type': 'Artist'}
-    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
-    r = requests.get(BASE_URL + "search", params=params, headers=headers)
+    r = search_svara(params)
 
-    r = r.json()
     id = r[0]['topResult']['dataList'][0]['id']
     return "svara://play.svara.id/Artist/{}".format(id)
 
@@ -99,14 +105,12 @@ def music_play_popular(req):
     pass
 
 def music_play_title(req):
-    title_song = req['entities']['title_song'][0]['value']
-    name_artist = req['entities']['name_artist'][0]['value'] if req.get('entities').get('name_artist') else None
+    title_song = read_value(req['entities']['title_song'])
+    name_artist = read_value(req['entities']['name_artist']) if req.get('entities').get('name_artist') else None
 
     params = {'query': title_song, 'type': 'Music'}
-    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
-    r = requests.get(BASE_URL + "search", params=params, headers=headers)
+    r = search_svara(params)
 
-    r = r.json()
     id = r[0]['topResult']['dataList'][0]['id']
     return "svara://play.svara.id/Music/{}".format(id)
 
@@ -114,14 +118,19 @@ def play_recommendation(req):
     pass
 
 def playlist_play(req):
-    pass
+    name_playlist = read_value(req['entities']['name_playlist'])
+
+    params = {'query': name_playlist, 'type': 'Playlist'}
+    r = search_svara(params)
+
+    id = r[0]['topResult']['dataList'][0]['id']
+    return "svara://play.svara.id/Playlist/{}".format(id)
 
 def radio_play(req):
-    name_radio = req['entities']['name_radio'][0]['value']
+    name_radio = read_value(req['entities']['name_radio'])
 
     params = {'query': name_radio, 'type': 'Radio'}
-    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
-    r = requests.get(BASE_URL + "search", params=params, headers=headers)
+    r = search_svara(params)
 
     id = r[0]['topResult']['dataList'][0]['id']
     return "svara://play.svara.id/Radio/{}".format(id)
@@ -133,26 +142,23 @@ def radioContent_play_tag(req):
     pass
 
 def radioContent_play_title(req):
-    title_content = req['entities']['title_content'][0]['value']
+    title_content = read_value(req['entities']['title_content'])
 
     params = {'query': title_content, 'type': 'RadioContent'}
-    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
-    r = requests.get(BASE_URL + "search", params=params, headers=headers)
+    r = search_svara(params)
 
     id = r[0]['topResult']['dataList'][0]['id']
     return "svara://play.svara.id/RadioContent/{}".format(id)
 
 def search(req):
     if req.get('entities').get('query'):
-        query = req['entities']['query'][0]['value']
+        query = read_value(req['entities']['query'])
     else:
-        query = list(req['entities'].values())[0][0]['value']
+        query = read_value(list(req['entities'].values())[0])
 
     params = {'query': query}
-    headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
-    r = requests.get(BASE_URL + "search", params=params, headers=headers)
 
-    return r.json()
+    return search_svara(params)
 
 if __name__ == "__main__":
     app.run()
