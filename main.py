@@ -136,13 +136,26 @@ def radio_play(req):
     return "svara://play.svara.id/Radio/{}".format(id)
 
 def radioContent_play_radio(req):
-    pass
+    name_radio = read_value(req['entities']['name_radio'])
+
+    params = {'query': name_radio, 'type': 'RadioContent'}
+    r = search_svara(params)
+
+    id = r[0]['topResult']['dataList'][0]['id']
+    return "svara://play.svara.id/RadioContent/{}".format(id)
 
 def radioContent_play_tag(req):
-    pass
+    tag = read_value(req['entities']['tag'])
+
+    params = {'query': tag, 'type': 'RadioContent'}
+    r = search_svara(params)
+
+    id = r[0]['topResult']['dataList'][0]['id']
+    return "svara://play.svara.id/RadioContent/{}".format(id)
 
 def radioContent_play_title(req):
     title_content = read_value(req['entities']['title_content'])
+    episode = read_value(req['entities']['episode']) if req.get('entities').get('episode') else None
 
     params = {'query': title_content, 'type': 'RadioContent'}
     r = search_svara(params)
