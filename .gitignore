@@ -105,3 +105,4 @@ venv.bak/
 
 #other
 dev-folder/
+.vscode/
