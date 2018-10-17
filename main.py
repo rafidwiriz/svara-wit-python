@@ -21,19 +21,19 @@ def wit():
         r = intent_switch(res, res['entities']['intent'][0]['value'])
 
     if r:
-        if (type(r) == list):
-            print(type(r))
-            r = make_response(jsonify(r))
-            r.headers['Content-Type'] = "application/json"
-            r = (r, 200)
-        else:
-            r = redirect(r, code=302)
+        r = make_response(jsonify(r))
+        r.headers['Content-Type'] = "application/json"
+        r = (r, 200)
     else:
         r = make_response(jsonify({"text": "Oops. Something went wrong!"}))
         r.headers['Content-Type'] = "application/json"
         r = (r, 404)
 
     return r
+
+@app.route('/wit-sound', methods=['POST'])
+def witSound():
+    pass
 
 def get_string_date():
     now = datetime.date.today()
@@ -50,8 +50,13 @@ def read_value(entity):
 def search_svara(params):
     headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
     r = requests.get(BASE_URL + "search", params=params, headers=headers)
+    r = r.json()
 
-    return r.json()
+    if params.get("type", None):
+        top = r.pop(0)
+        r = { "topResult": top, "results": [] }
+
+    return r
 
 def intent_switch(req, act):
     FUNC_DICT = {
@@ -89,8 +94,7 @@ def music_play_album(req):
     params = {'query': title_album, 'type': 'Album'}
     r = search_svara(params)
 
-    id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://play.svara.id/Album/{}".format(id)
+    return r
 
 def music_play_artist(req):
     name_artist = read_value(req['entities']['name_artist'])
@@ -98,8 +102,7 @@ def music_play_artist(req):
     params = {'query': name_artist, 'type': 'Artist'}
     r = search_svara(params)
 
-    id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://play.svara.id/Artist/{}".format(id)
+    return r
 
 def music_play_popular(req):
     pass
@@ -111,8 +114,7 @@ def music_play_title(req):
     params = {'query': title_song, 'type': 'Music'}
     r = search_svara(params)
 
-    id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://play.svara.id/Music/{}".format(id)
+    return r
 
 def play_recommendation(req):
     pass
@@ -123,8 +125,7 @@ def playlist_play(req):
     params = {'query': name_playlist, 'type': 'Playlist'}
     r = search_svara(params)
 
-    id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://play.svara.id/Playlist/{}".format(id)
+    return r
 
 def radio_play(req):
     name_radio = read_value(req['entities']['name_radio'])
@@ -132,8 +133,7 @@ def radio_play(req):
     params = {'query': name_radio, 'type': 'Radio'}
     r = search_svara(params)
 
-    id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://play.svara.id/Radio/{}".format(id)
+    return r
 
 def radioContent_play_radio(req):
     name_radio = read_value(req['entities']['name_radio'])
@@ -141,8 +141,7 @@ def radioContent_play_radio(req):
     params = {'query': name_radio, 'type': 'RadioContent'}
     r = search_svara(params)
 
-    id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://play.svara.id/RadioContent/{}".format(id)
+    return r
 
 def radioContent_play_tag(req):
     tag = read_value(req['entities']['tag'])
@@ -150,8 +149,7 @@ def radioContent_play_tag(req):
     params = {'query': tag, 'type': 'RadioContent'}
     r = search_svara(params)
 
-    id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://play.svara.id/RadioContent/{}".format(id)
+    return r
 
 def radioContent_play_title(req):
     title_content = read_value(req['entities']['title_content'])
@@ -160,8 +158,7 @@ def radioContent_play_title(req):
     params = {'query': title_content, 'type': 'RadioContent'}
     r = search_svara(params)
 
-    id = r[0]['topResult']['dataList'][0]['id']
-    return "svara://play.svara.id/RadioContent/{}".format(id)
+    return r
 
 def search(req):
     if req.get('entities').get('query'):
