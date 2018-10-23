@@ -52,9 +52,8 @@ def search_svara(params):
     r = requests.get(BASE_URL + "search", params=params, headers=headers)
     r = r.json()
 
-    if params.get("type", None):
-        top = r.pop(0)
-        r = { "topResult": top, "results": [] }
+    top = r.pop(0)
+    r = { "topResult": top, "results": [] }
 
     return r
 
@@ -92,17 +91,15 @@ def music_play_album(req):
     name_artist = read_value(req['entities']['name_artist']) if req.get('entities').get('name_artist') else None
 
     params = {'query': title_album, 'type': 'Album'}
-    r = search_svara(params)
 
-    return r
+    return search_svara(params)
 
 def music_play_artist(req):
     name_artist = read_value(req['entities']['name_artist'])
 
     params = {'query': name_artist, 'type': 'Artist'}
-    r = search_svara(params)
 
-    return r
+    return search_svara(params)
 
 def music_play_popular(req):
     pass
@@ -112,9 +109,8 @@ def music_play_title(req):
     name_artist = read_value(req['entities']['name_artist']) if req.get('entities').get('name_artist') else None
 
     params = {'query': title_song, 'type': 'Music'}
-    r = search_svara(params)
 
-    return r
+    return search_svara(params)
 
 def play_recommendation(req):
     pass
@@ -123,42 +119,37 @@ def playlist_play(req):
     name_playlist = read_value(req['entities']['name_playlist'])
 
     params = {'query': name_playlist, 'type': 'Playlist'}
-    r = search_svara(params)
 
-    return r
+    return search_svara(params)
 
 def radio_play(req):
     name_radio = read_value(req['entities']['name_radio'])
 
     params = {'query': name_radio, 'type': 'Radio'}
-    r = search_svara(params)
 
-    return r
+    return search_svara(params)
 
 def radioContent_play_radio(req):
     name_radio = read_value(req['entities']['name_radio'])
 
     params = {'query': name_radio, 'type': 'RadioContent'}
-    r = search_svara(params)
 
-    return r
+    return search_svara(params)
 
 def radioContent_play_tag(req):
     tag = read_value(req['entities']['tag'])
 
     params = {'query': tag, 'type': 'RadioContent'}
-    r = search_svara(params)
 
-    return r
+    return search_svara(params)
 
 def radioContent_play_title(req):
     title_content = read_value(req['entities']['title_content'])
     episode = read_value(req['entities']['episode']) if req.get('entities').get('episode') else None
 
     params = {'query': title_content, 'type': 'RadioContent'}
-    r = search_svara(params)
 
-    return r
+    return search_svara(params)
 
 def search(req):
     if req.get('entities').get('query'):
