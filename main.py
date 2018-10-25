@@ -7,6 +7,10 @@ from config import *
 app = Flask(__name__)
 WIT_TOKEN = 'RUU3F6BNDSDLL7RO6ZLL6V6IKN3Z5T4W'
 
+@app.route('/', methods=["GET"])
+def index():
+    return "Hello World!"
+
 @app.route('/wit', methods=['POST'])
 def wit():
     req = request.get_json(silent=True, force=True)
