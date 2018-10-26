@@ -37,7 +37,24 @@ def wit():
 
 @app.route('/wit-sound', methods=['POST'])
 def witSound():
-    pass
+    params = {'v': get_string_date()}
+    headers = {'Authorization': 'Bearer ' + WIT_TOKEN, 'Content-Type': 'audio/wav'}
+    res = requests.post("https://api.wit.ai/speech", params=params, headers=headers, data=request.get_data())
+    res = res.json()
+
+    if res['entities']['intent']:
+        r = intent_switch(res, res['entities']['intent'][0]['value'])
+
+    if r:
+        r = make_response(jsonify(r))
+        r.headers['Content-Type'] = "application/json"
+        r = (r, 200)
+    else:
+        r = make_response(jsonify({"text": "Oops. Something went wrong!"}))
+        r.headers['Content-Type'] = "application/json"
+        r = (r, 404)
+
+    return r
 
 def get_string_date():
     now = datetime.date.today()
