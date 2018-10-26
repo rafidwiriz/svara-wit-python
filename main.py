@@ -74,7 +74,7 @@ def search_svara(params):
     r = r.json()
 
     top = r.pop(0)
-    r = { "topResult": top, "results": [] }
+    r = { "topResult": top, "results": [r] }
 
     return r
 
