@@ -164,3 +164,6 @@ def search(req):
     params = {'query': query}
 
     return search_svara(params)
+
+if __name__ == "__main__":
+    app.run()
