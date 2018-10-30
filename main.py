@@ -36,7 +36,7 @@ def wit():
         r.headers['Content-Type'] = "application/json"
         r = (r, 404)
 
-    print (td0 + ", " + td1)
+    print (td0, ", ", td1)
 
     return r
 
