@@ -1,6 +1,7 @@
 from flask import Flask, request, make_response, jsonify, redirect
 import requests
 import datetime
+import time
 
 from config import *
 
@@ -18,11 +19,13 @@ def wit():
 
     params = {'v': get_string_date(), 'q': txt}
     headers = {'Authorization': 'Bearer ' + WIT_TOKEN}
+    t0 = time.time()
     res = requests.get("https://api.wit.ai/message", params=params, headers=headers)
+    td0 = time.time() - t0
     res = res.json()
 
     if res['entities']['intent']:
-        r = intent_switch(res, res['entities']['intent'][0]['value'])
+        r, td1 = intent_switch(res, res['entities']['intent'][0]['value'])
 
     if r:
         r = make_response(jsonify(r))
@@ -32,6 +35,8 @@ def wit():
         r = make_response(jsonify({"text": "Oops. Something went wrong!"}))
         r.headers['Content-Type'] = "application/json"
         r = (r, 404)
+
+    print (td0 + ", " + td1)
 
     return r
 
@@ -70,13 +75,16 @@ def read_value(entity):
 
 def search_svara(params):
     headers = {'Authorization': 'Bearer ' + ACCESS_TOKEN, 'x-consumer-username': ACCESS_TOKEN}
+
+    t = time.time()
     r = requests.get(BASE_URL + "search", params=params, headers=headers)
+    td = time.time() - t
     r = r.json()
 
     top = r.pop(0)
     r = { "topResult": top["topResult"], "results": [r] }
 
-    return r
+    return r, td
 
 def intent_switch(req, act):
     FUNC_DICT = {
