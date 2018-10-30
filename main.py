@@ -43,11 +43,14 @@ def wit():
 def witSound():
     params = {'v': get_string_date()}
     headers = {'Authorization': 'Bearer ' + WIT_TOKEN, 'Content-Type': 'audio/wav'}
+    t0 = time.time()
     res = requests.post("https://api.wit.ai/speech", params=params, headers=headers, data=request.get_data())
+    td0 = time.time() - t0
     res = res.json()
 
     if res['entities']['intent']:
-        r = intent_switch(res, res['entities']['intent'][0]['value'])
+        r, td1 = intent_switch(res, res['entities']['intent'][0]['value'])
+        r['apiTime'] = {'WitTime': int(td0 * 1000), 'SvaraTime': int(td1 * 1000)}
 
     if r:
         r = make_response(jsonify(r))
@@ -81,7 +84,7 @@ def search_svara(params):
     r = r.json()
 
     top = r.pop(0)
-    r = {"topResult": top["topResult"], "results": r}
+    r = {'topResult': top['topResult'], 'results': r}
 
     return r, td
 
