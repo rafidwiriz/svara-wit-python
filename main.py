@@ -26,7 +26,7 @@ def wit():
 
     if res['entities']['intent']:
         r, td1 = intent_switch(res, res['entities']['intent'][0]['value'])
-        r['apiTime'] = {'WitTime': td0, 'SvaraTime': td1}
+        r['apiTime'] = {'WitTime': int(td0 * 1000), 'SvaraTime': int(td1 * 1000)}
 
     if r:
         r = make_response(jsonify(r))
