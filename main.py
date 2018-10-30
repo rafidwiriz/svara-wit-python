@@ -26,6 +26,7 @@ def wit():
 
     if res['entities']['intent']:
         r, td1 = intent_switch(res, res['entities']['intent'][0]['value'])
+        r['apiTime'] = {'WitTime': td0, 'SvaraTime': td1}
 
     if r:
         r = make_response(jsonify(r))
@@ -35,8 +36,6 @@ def wit():
         r = make_response(jsonify({"text": "Oops. Something went wrong!"}))
         r.headers['Content-Type'] = "application/json"
         r = (r, 404)
-
-    print (td0, ", ", td1)
 
     return r
 
