@@ -41,7 +41,7 @@ def wit():
 @app.route('/wit-sound', methods=['POST'])
 def witSound():
     params = {'v': get_string_date()}
-    headers = {'Authorization': 'Bearer ' + WIT_TOKEN, 'Content-Type': 'audio/wav'}
+    headers = {'Authorization': 'Bearer ' + WIT_TOKEN, 'Content-Type': 'audio/mpeg3'}
     t0 = time.time()
     res = requests.post("https://api.wit.ai/speech", params=params, headers=headers, data=request.get_data())
     td0 = time.time() - t0
