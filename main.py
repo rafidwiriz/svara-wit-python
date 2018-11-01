@@ -14,28 +14,38 @@ def index():
 
 @app.route('/wit', methods=['POST'])
 def wit():
+    t0 = time.time()
     req = request.get_json(silent=True, force=True)
     txt = req.get('text')
 
     params = {'v': get_string_date(), 'q': txt}
     headers = {'Authorization': 'Bearer ' + WIT_TOKEN}
-    t0 = time.time()
+    t1 = time.time()
     res = requests.get("https://api.wit.ai/message", params=params, headers=headers)
-    td0 = time.time() - t0
+    td0 = time.time() - t1
     res = res.json()
 
     if res['entities']['intent']:
         r, td1 = intent_switch(res, res['entities']['intent'][0]['value'])
         r['apiTime'] = {'WitTime': int(td0 * 1000), 'SvaraTime': int(td1 * 1000)}
 
+    # if r:
+    #     r = make_response(jsonify(r))
+    #     r.headers['Content-Type'] = "application/json"
+    #     r = (r, 200)
+    # else:
+    #     r = make_response(jsonify({"text": "Oops. Something went wrong!"}))
+    #     r.headers['Content-Type'] = "application/json"
+    #     r = (r, 404)
+
     if r:
-        r = make_response(jsonify(r))
-        r.headers['Content-Type'] = "application/json"
-        r = (r, 200)
+        r = [r, 200]
     else:
-        r = make_response(jsonify({"text": "Oops. Something went wrong!"}))
-        r.headers['Content-Type'] = "application/json"
-        r = (r, 404)
+        r = {"text": "Oops. Something went wrong!"}
+        r = [r, 404]
+
+    r[0]['apiTime']['totalTime'] = time.time() - t0
+    r = tuple(r)
 
     return r
 
