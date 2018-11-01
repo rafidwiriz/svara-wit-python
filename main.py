@@ -43,8 +43,7 @@ def wit():
     else:
         r = {"text": "Oops. Something went wrong!"}
         r = [r, 404]
-
-    r[0]['apiTime']['totalTime'] = time.time() - t0
+        
     r = tuple(r)
 
     return r
