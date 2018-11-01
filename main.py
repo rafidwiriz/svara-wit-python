@@ -29,22 +29,14 @@ def wit():
         r, td1 = intent_switch(res, res['entities']['intent'][0]['value'])
         r['apiTime'] = {'WitTime': int(td0 * 1000), 'SvaraTime': int(td1 * 1000)}
 
-    # if r:
-    #     r = make_response(jsonify(r))
-    #     r.headers['Content-Type'] = "application/json"
-    #     r = (r, 200)
-    # else:
-    #     r = make_response(jsonify({"text": "Oops. Something went wrong!"}))
-    #     r.headers['Content-Type'] = "application/json"
-    #     r = (r, 404)
-
     if r:
-        r = [r, 200]
+        r = make_response(jsonify(r))
+        r.headers['Content-Type'] = "application/json"
+        r = (r, 200)
     else:
-        r = {"text": "Oops. Something went wrong!"}
-        r = [r, 404]
-        
-    r = tuple(r)
+        r = make_response(jsonify({"text": "Oops. Something went wrong!"}))
+        r.headers['Content-Type'] = "application/json"
+        r = (r, 404)
 
     return r
 
