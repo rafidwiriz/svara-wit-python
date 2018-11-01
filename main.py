@@ -31,11 +31,9 @@ def wit():
 
     if r:
         r = make_response(jsonify(r))
-        r.headers['Content-Type'] = "application/json"
         r = (r, 200)
     else:
         r = make_response(jsonify({"text": "Oops. Something went wrong!"}))
-        r.headers['Content-Type'] = "application/json"
         r = (r, 404)
 
     return r
